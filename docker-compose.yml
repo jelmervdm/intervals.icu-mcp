@@ -1,0 +1,15 @@
+services:
+  intervals-icu-mcp:
+    build: .
+    image: ghcr.io/jelmervdm/intervals.icu-mcp:main
+    container_name: intervals-icu-mcp
+    stdin_open: true
+    environment:
+      - INTERVALS_API_KEY=${INTERVALS_API_KEY}
+      - INTERVALS_ATHLETE_ID=${INTERVALS_ATHLETE_ID:-0}
+      - INTERVALS_BASE_URL=${INTERVALS_BASE_URL:-https://intervals.icu/api/v1}
+      - TOOL_ROUTING=${TOOL_ROUTING:-false}
+      - ENABLE_CONTEXTFORGE_GATEWAY=${ENABLE_CONTEXTFORGE_GATEWAY:-false}
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
