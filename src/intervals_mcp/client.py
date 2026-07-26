@@ -1,7 +1,7 @@
 """Intervals.icu REST API Client."""
 
 import os
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, cast
 import httpx
 
 DEFAULT_BASE_URL = "https://intervals.icu/api/v1"
@@ -28,17 +28,13 @@ class IntervalsClient:
         timeout: float = 30.0,
     ):
         self.api_key = api_key or os.environ.get("INTERVALS_API_KEY")
-        self.default_athlete_id = (
-            default_athlete_id or os.environ.get("INTERVALS_ATHLETE_ID") or "0"
-        )
+        self.default_athlete_id = default_athlete_id or os.environ.get("INTERVALS_ATHLETE_ID") or "0"
         self.base_url = (base_url or DEFAULT_BASE_URL).rstrip("/")
         self.timeout = timeout
 
     def _get_auth(self) -> Tuple[str, str]:
         if not self.api_key:
-            raise ValueError(
-                "INTERVALS_API_KEY is not set. Please set the INTERVALS_API_KEY environment variable."
-            )
+            raise ValueError("INTERVALS_API_KEY is not set. Please set the INTERVALS_API_KEY environment variable.")
         # Intervals.icu uses HTTP Basic authentication with username "API_KEY" and the key as password
         return ("API_KEY", self.api_key)
 
@@ -74,7 +70,7 @@ class IntervalsClient:
         ath_id = athlete_id or self.default_athlete_id
         with self._client() as c:
             res = c.get(f"/athlete/{ath_id}")
-            return self._handle_response(res)
+            return cast(Dict[str, Any], self._handle_response(res))
 
     # ---------------------------------------------------------------------------
     # Activity Endpoints
@@ -91,71 +87,63 @@ class IntervalsClient:
         params = {"oldest": oldest, "newest": newest}
         with self._client() as c:
             res = c.get(f"/athlete/{ath_id}/activities", params=params)
-            return self._handle_response(res)
+            return cast(List[Dict[str, Any]], self._handle_response(res))
 
     def get_activity(self, activity_id: str) -> Dict[str, Any]:
         """Retrieve details of a single activity by ID."""
         with self._client() as c:
             res = c.get(f"/activity/{activity_id}")
-            return self._handle_response(res)
+            return cast(Dict[str, Any], self._handle_response(res))
 
-    def update_activity(
-        self, activity_id: str, updates: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    def update_activity(self, activity_id: str, updates: Dict[str, Any]) -> Dict[str, Any]:
         """Update metadata of an existing activity."""
         with self._client() as c:
             res = c.put(f"/activity/{activity_id}", json=updates)
-            return self._handle_response(res)
+            return cast(Dict[str, Any], self._handle_response(res))
 
     def delete_activity(self, activity_id: str) -> Dict[str, Any]:
         """Delete an activity by ID."""
         with self._client() as c:
             res = c.delete(f"/activity/{activity_id}")
-            return self._handle_response(res)
+            return cast(Dict[str, Any], self._handle_response(res))
 
     def get_activity_messages(self, activity_id: str) -> List[Dict[str, Any]]:
         """Get comments/messages attached to an activity."""
         with self._client() as c:
             res = c.get(f"/activity/{activity_id}/messages")
-            return self._handle_response(res)
+            return cast(List[Dict[str, Any]], self._handle_response(res))
 
     def add_activity_message(self, activity_id: str, text: str) -> Dict[str, Any]:
         """Post a comment/note to an activity."""
         with self._client() as c:
             res = c.post(f"/activity/{activity_id}/messages", json={"content": text})
-            return self._handle_response(res)
+            return cast(Dict[str, Any], self._handle_response(res))
 
     # ---------------------------------------------------------------------------
     # Calendar & Event Endpoints
     # ---------------------------------------------------------------------------
 
-    def list_events(
-        self, oldest: str, newest: str, athlete_id: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+    def list_events(self, oldest: str, newest: str, athlete_id: Optional[str] = None) -> List[Dict[str, Any]]:
         """List calendar events and planned workouts between dates."""
         ath_id = athlete_id or self.default_athlete_id
         params = {"oldest": oldest, "newest": newest}
         with self._client() as c:
             res = c.get(f"/athlete/{ath_id}/events", params=params)
-            return self._handle_response(res)
+            return cast(List[Dict[str, Any]], self._handle_response(res))
 
-    def get_event(
-        self, event_id: int, athlete_id: Optional[str] = None
-    ) -> Dict[str, Any]:
+    def get_event(self, event_id: int, athlete_id: Optional[str] = None) -> Dict[str, Any]:
         """Fetch details of a single calendar event."""
         ath_id = athlete_id or self.default_athlete_id
         with self._client() as c:
             res = c.get(f"/athlete/{ath_id}/events/{event_id}")
-            return self._handle_response(res)
+            return cast(Dict[str, Any], self._handle_response(res))
 
-    def create_event(
-        self, event_data: Dict[str, Any], athlete_id: Optional[str] = None
-    ) -> Dict[str, Any]:
+    def create_event(self, event_data: Dict[str, Any], athlete_id: Optional[str] = None) -> Dict[str, Any]:
         """Create a planned workout or calendar event."""
         ath_id = athlete_id or self.default_athlete_id
         with self._client() as c:
             res = c.post(f"/athlete/{ath_id}/events", json=event_data)
-            return self._handle_response(res)
+            return cast(Dict[str, Any], self._handle_response(res))
 
     def update_event(
         self, event_id: int, event_data: Dict[str, Any], athlete_id: Optional[str] = None
@@ -164,39 +152,33 @@ class IntervalsClient:
         ath_id = athlete_id or self.default_athlete_id
         with self._client() as c:
             res = c.put(f"/athlete/{ath_id}/events/{event_id}", json=event_data)
-            return self._handle_response(res)
+            return cast(Dict[str, Any], self._handle_response(res))
 
-    def delete_event(
-        self, event_id: int, athlete_id: Optional[str] = None
-    ) -> Dict[str, Any]:
+    def delete_event(self, event_id: int, athlete_id: Optional[str] = None) -> Dict[str, Any]:
         """Delete a calendar event."""
         ath_id = athlete_id or self.default_athlete_id
         with self._client() as c:
             res = c.delete(f"/athlete/{ath_id}/events/{event_id}")
-            return self._handle_response(res)
+            return cast(Dict[str, Any], self._handle_response(res))
 
     # ---------------------------------------------------------------------------
     # Wellness Endpoints
     # ---------------------------------------------------------------------------
 
-    def list_wellness(
-        self, oldest: str, newest: str, athlete_id: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+    def list_wellness(self, oldest: str, newest: str, athlete_id: Optional[str] = None) -> List[Dict[str, Any]]:
         """List daily wellness records in a date range."""
         ath_id = athlete_id or self.default_athlete_id
         params = {"oldest": oldest, "newest": newest}
         with self._client() as c:
             res = c.get(f"/athlete/{ath_id}/wellness", params=params)
-            return self._handle_response(res)
+            return cast(List[Dict[str, Any]], self._handle_response(res))
 
-    def get_wellness(
-        self, date: str, athlete_id: Optional[str] = None
-    ) -> Dict[str, Any]:
+    def get_wellness(self, date: str, athlete_id: Optional[str] = None) -> Dict[str, Any]:
         """Fetch wellness metrics for a single date (YYYY-MM-DD)."""
         ath_id = athlete_id or self.default_athlete_id
         with self._client() as c:
             res = c.get(f"/athlete/{ath_id}/wellness/{date}")
-            return self._handle_response(res)
+            return cast(Dict[str, Any], self._handle_response(res))
 
     def update_wellness(
         self, date: str, wellness_data: Dict[str, Any], athlete_id: Optional[str] = None
@@ -205,7 +187,7 @@ class IntervalsClient:
         ath_id = athlete_id or self.default_athlete_id
         with self._client() as c:
             res = c.put(f"/athlete/{ath_id}/wellness/{date}", json=wellness_data)
-            return self._handle_response(res)
+            return cast(Dict[str, Any], self._handle_response(res))
 
     # ---------------------------------------------------------------------------
     # Workout Library Endpoints
@@ -216,11 +198,9 @@ class IntervalsClient:
         ath_id = athlete_id or self.default_athlete_id
         with self._client() as c:
             res = c.get(f"/athlete/{ath_id}/folders")
-            return self._handle_response(res)
+            return cast(List[Dict[str, Any]], self._handle_response(res))
 
-    def list_workouts(
-        self, folder_id: Optional[int] = None, athlete_id: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+    def list_workouts(self, folder_id: Optional[int] = None, athlete_id: Optional[str] = None) -> List[Dict[str, Any]]:
         """List workouts from library."""
         ath_id = athlete_id or self.default_athlete_id
         params = {}
@@ -228,4 +208,4 @@ class IntervalsClient:
             params["folder_id"] = folder_id
         with self._client() as c:
             res = c.get(f"/athlete/{ath_id}/workouts", params=params)
-            return self._handle_response(res)
+            return cast(List[Dict[str, Any]], self._handle_response(res))

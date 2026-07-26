@@ -19,9 +19,7 @@ def register(mcp: FastMCP) -> None:
         return client.list_folders(athlete_id=athlete_id)
 
     @mcp.tool()
-    def list_workouts(
-        folder_id: Optional[int] = None, athlete_id: str = "0"
-    ) -> List[Dict[str, Any]]:
+    def list_workouts(folder_id: Optional[int] = None, athlete_id: str = "0") -> List[Dict[str, Any]]:
         """List structured library workouts.
 
         Args:

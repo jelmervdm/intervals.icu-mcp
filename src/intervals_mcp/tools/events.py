@@ -96,9 +96,7 @@ def register(mcp: FastMCP) -> None:
             raise ValueError("No fields provided to update.")
 
         client = IntervalsClient()
-        return client.update_event(
-            event_id=event_id, event_data=event_data, athlete_id=athlete_id
-        )
+        return client.update_event(event_id=event_id, event_data=event_data, athlete_id=athlete_id)
 
     @mcp.tool()
     def delete_event(event_id: int, athlete_id: str = "0") -> Dict[str, Any]:

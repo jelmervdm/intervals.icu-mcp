@@ -84,6 +84,4 @@ def register(mcp: FastMCP) -> None:
             raise ValueError("No wellness fields provided to update.")
 
         client = IntervalsClient()
-        return client.update_wellness(
-            date=date, wellness_data=wellness_data, athlete_id=athlete_id
-        )
+        return client.update_wellness(date=date, wellness_data=wellness_data, athlete_id=athlete_id)

@@ -103,11 +103,7 @@ def route_tools(query: str) -> str:
     results = router.search(query)
 
     tm = mcp._tool_manager  # type: ignore[attr-defined]
-    _active_tools = {
-        name: tm._tools[name]
-        for name in results
-        if name in tm._tools  # type: ignore[attr-defined]
-    }
+    _active_tools = {name: tm._tools[name] for name in results if name in tm._tools}  # type: ignore[attr-defined]
 
     logger.info("route_tools(%r) → %d tools activated", query, len(_active_tools))
 
