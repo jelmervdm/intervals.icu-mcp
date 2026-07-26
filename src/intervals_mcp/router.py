@@ -9,9 +9,7 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import List, Optional, Tuple
-
-import numpy as np
+from typing import Any, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +26,7 @@ class ToolRouter:
         cache_dir = os.environ.get("FASTEMBED_CACHE_DIR")
         self._model = TextEmbedding(model_name, cache_dir=cache_dir)
         self._tool_names: List[str] = []
-        self._tool_embeddings: Optional[np.ndarray] = None
+        self._tool_embeddings: Optional[Any] = None
         logger.info("Embedding model loaded")
 
     def index(self, tools: List[Tuple[str, str]]) -> None:
@@ -37,6 +35,8 @@ class ToolRouter:
         Args:
             tools: List of (name, description) pairs for registered tools.
         """
+        import numpy as np
+
         self._tool_names = [name for name, _ in tools]
         texts = [f"{name}: {desc}" for name, desc in tools]
         self._tool_embeddings = np.array(list(self._model.embed(texts)))
@@ -52,6 +52,8 @@ class ToolRouter:
         Returns:
             List of tool names, most relevant first.
         """
+        import numpy as np
+
         if self._tool_embeddings is None or len(self._tool_names) == 0:
             return []
 
@@ -72,6 +74,13 @@ def get_router() -> Optional[ToolRouter]:
 
     enabled = os.environ.get("TOOL_ROUTING", "").lower() in ("1", "true", "yes")
     if not enabled:
+        return None
+
+    try:
+        import numpy  # noqa: F401
+        import fastembed  # noqa: F401
+    except ImportError:
+        logger.warning("TOOL_ROUTING is enabled but 'router' dependencies (numpy, fastembed) are not installed.")
         return None
 
     _router = ToolRouter()

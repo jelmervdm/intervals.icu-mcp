@@ -6,7 +6,6 @@ from typing import Any, Dict, Optional
 
 from mcp.server.fastmcp import FastMCP, Context
 
-from intervals_mcp.router import get_router
 from intervals_mcp.tools import activities, athlete, events, wellness, workouts
 
 logger = logging.getLogger(__name__)
@@ -48,6 +47,8 @@ def _ensure_router_indexed() -> None:
     global _router_indexed
     if _router_indexed:
         return
+
+    from intervals_mcp.router import get_router
 
     router = get_router()
     if router is None:
@@ -95,6 +96,8 @@ def route_tools(query: str) -> str:
         return "Tool routing is not enabled. All tools are already visible."
 
     _ensure_router_indexed()
+
+    from intervals_mcp.router import get_router
 
     router = get_router()
     if router is None:
