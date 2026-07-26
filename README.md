@@ -105,7 +105,7 @@ Podman is fully supported on Fedora/RHEL as a rootless drop-in replacement for D
 **Via `python` (editable install `pip install -e .`):**
 ```json
 {
-  "servers": {
+  "mcpServers": {
     "intervals": {
       "command": "python",
       "args": ["-m", "intervals_mcp.server"],
@@ -121,7 +121,7 @@ Podman is fully supported on Fedora/RHEL as a rootless drop-in replacement for D
 **Via `uvx` directly from GitHub repository:**
 ```json
 {
-  "servers": {
+  "mcpServers": {
     "intervals": {
       "command": "uvx",
       "args": ["--from", "git+https://github.com/jelmervdm/intervals.icu-mcp.git", "intervals-icu-mcp-server"],
