@@ -1,20 +1,26 @@
 """Events & Calendar domain tools for Intervals.icu MCP server."""
 
-from typing import Any, Dict, List, Optional
+from typing import Annotated, Any, Dict, List, Optional
+from pydantic import Field
 from mcp.server.fastmcp import FastMCP
+from mcp.types import ToolAnnotations
 from intervals_mcp.client import IntervalsClient
 
 
 def register(mcp: FastMCP) -> None:
     """Register calendar and event management tools with FastMCP."""
 
-    @mcp.tool()
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
     def list_events(
-        oldest: str,
-        newest: str,
-        athlete_id: str = "0",
+        oldest: Annotated[str, Field(description="Start date in YYYY-MM-DD format (e.g. '2026-07-01').")],
+        newest: Annotated[str, Field(description="End date in YYYY-MM-DD format (e.g. '2026-07-26').")],
+        athlete_id: Annotated[
+            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
+        ] = "0",
     ) -> List[Dict[str, Any]]:
         """List calendar events and planned workouts between dates.
+
+        Use when browsing planned workouts, notes, or race events on the calendar. To fetch details of a specific planned event, use get_event.
 
         Args:
             oldest: Start date (YYYY-MM-DD).
@@ -24,9 +30,16 @@ def register(mcp: FastMCP) -> None:
         client = IntervalsClient()
         return client.list_events(oldest=oldest, newest=newest, athlete_id=athlete_id)
 
-    @mcp.tool()
-    def get_event(event_id: int, athlete_id: str = "0") -> Dict[str, Any]:
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
+    def get_event(
+        event_id: Annotated[int, Field(description="Calendar event ID.")],
+        athlete_id: Annotated[
+            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
+        ] = "0",
+    ) -> Dict[str, Any]:
         """Fetch details of a single calendar event or planned workout.
+
+        Use when inspecting target workout steps or race plans for a specific calendar item. To list events across a date range, use list_events.
 
         Args:
             event_id: Calendar event ID.
@@ -35,16 +48,29 @@ def register(mcp: FastMCP) -> None:
         client = IntervalsClient()
         return client.get_event(event_id=event_id, athlete_id=athlete_id)
 
-    @mcp.tool()
+    @mcp.tool(annotations=ToolAnnotations(destructiveHint=False, idempotentHint=False))
     def create_event(
-        start_date_local: str,
-        name: str,
-        description: Optional[str] = None,
-        type: Optional[str] = None,
-        category: str = "WORKOUT",
-        athlete_id: str = "0",
+        start_date_local: Annotated[
+            str,
+            Field(description="Local start time in YYYY-MM-DDTHH:MM:SS format (e.g. '2026-07-27T08:00:00')."),
+        ],
+        name: Annotated[str, Field(description="Title of event or planned workout.")],
+        description: Annotated[
+            Optional[str], Field(description="Workout prescription steps or description text.")
+        ] = None,
+        type: Annotated[
+            Optional[str], Field(description="Activity type (e.g. 'Ride', 'Run', 'Swim').")
+        ] = None,
+        category: Annotated[
+            str, Field(description="Event category: 'WORKOUT', 'RACE', or 'NOTE'.")
+        ] = "WORKOUT",
+        athlete_id: Annotated[
+            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
+        ] = "0",
     ) -> Dict[str, Any]:
-        """Create a new planned workout or calendar event.
+        """Create a new planned workout, race event, or note on the calendar.
+
+        Use when scheduling upcoming training or race events. To modify an existing calendar event, use update_event.
 
         Args:
             start_date_local: Local start time in YYYY-MM-DDTHH:MM:SS format (e.g. "2026-07-27T08:00:00").
@@ -67,15 +93,23 @@ def register(mcp: FastMCP) -> None:
         client = IntervalsClient()
         return client.create_event(event_data=event_data, athlete_id=athlete_id)
 
-    @mcp.tool()
+    @mcp.tool(annotations=ToolAnnotations(destructiveHint=False, idempotentHint=True))
     def update_event(
-        event_id: int,
-        start_date_local: Optional[str] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        athlete_id: str = "0",
+        event_id: Annotated[int, Field(description="Calendar event ID to update.")],
+        start_date_local: Annotated[
+            Optional[str], Field(description="Updated local start time (YYYY-MM-DDTHH:MM:SS).")
+        ] = None,
+        name: Annotated[Optional[str], Field(description="Updated event title.")] = None,
+        description: Annotated[
+            Optional[str], Field(description="Updated workout prescription steps or notes.")
+        ] = None,
+        athlete_id: Annotated[
+            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
+        ] = "0",
     ) -> Dict[str, Any]:
         """Update an existing calendar event or planned workout.
+
+        Use when modifying workout targets, start dates, or titles. To schedule a new event, use create_event.
 
         Args:
             event_id: Calendar event ID to update.
@@ -98,9 +132,16 @@ def register(mcp: FastMCP) -> None:
         client = IntervalsClient()
         return client.update_event(event_id=event_id, event_data=event_data, athlete_id=athlete_id)
 
-    @mcp.tool()
-    def delete_event(event_id: int, athlete_id: str = "0") -> Dict[str, Any]:
-        """Delete a calendar event by ID.
+    @mcp.tool(annotations=ToolAnnotations(destructiveHint=True, idempotentHint=True))
+    def delete_event(
+        event_id: Annotated[int, Field(description="ID of the event to delete.")],
+        athlete_id: Annotated[
+            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
+        ] = "0",
+    ) -> Dict[str, Any]:
+        """Delete a calendar event or planned workout by ID.
+
+        Use to remove canceled workouts or events from the training calendar.
 
         Args:
             event_id: ID of the event to delete.
@@ -108,3 +149,4 @@ def register(mcp: FastMCP) -> None:
         """
         client = IntervalsClient()
         return client.delete_event(event_id=event_id, athlete_id=athlete_id)
+

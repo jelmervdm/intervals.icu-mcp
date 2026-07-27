@@ -1,20 +1,26 @@
 """Wellness domain tools for Intervals.icu MCP server."""
 
-from typing import Any, Dict, List, Optional
+from typing import Annotated, Any, Dict, List, Optional
+from pydantic import Field
 from mcp.server.fastmcp import FastMCP
+from mcp.types import ToolAnnotations
 from intervals_mcp.client import IntervalsClient
 
 
 def register(mcp: FastMCP) -> None:
     """Register wellness management tools with FastMCP."""
 
-    @mcp.tool()
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
     def list_wellness(
-        oldest: str,
-        newest: str,
-        athlete_id: str = "0",
+        oldest: Annotated[str, Field(description="Start date in YYYY-MM-DD format (e.g. '2026-07-01').")],
+        newest: Annotated[str, Field(description="End date in YYYY-MM-DD format (e.g. '2026-07-26').")],
+        athlete_id: Annotated[
+            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
+        ] = "0",
     ) -> List[Dict[str, Any]]:
         """List daily wellness records in a date range.
+
+        Use when tracking trends in sleep, HRV, weight, and readiness over time. To inspect a single day's wellness record, use get_wellness.
 
         Args:
             oldest: Start date (YYYY-MM-DD).
@@ -24,9 +30,16 @@ def register(mcp: FastMCP) -> None:
         client = IntervalsClient()
         return client.list_wellness(oldest=oldest, newest=newest, athlete_id=athlete_id)
 
-    @mcp.tool()
-    def get_wellness(date: str, athlete_id: str = "0") -> Dict[str, Any]:
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
+    def get_wellness(
+        date: Annotated[str, Field(description="Date string in YYYY-MM-DD format.")],
+        athlete_id: Annotated[
+            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
+        ] = "0",
+    ) -> Dict[str, Any]:
         """Fetch wellness record for a specific date.
+
+        Use when examining a single day's physiological metrics. To list metrics across multiple days, use list_wellness.
 
         Args:
             date: Date string in YYYY-MM-DD format.
@@ -35,20 +48,36 @@ def register(mcp: FastMCP) -> None:
         client = IntervalsClient()
         return client.get_wellness(date=date, athlete_id=athlete_id)
 
-    @mcp.tool()
+    @mcp.tool(annotations=ToolAnnotations(destructiveHint=False, idempotentHint=True))
     def update_wellness(
-        date: str,
-        weight: Optional[float] = None,
-        resting_hr: Optional[int] = None,
-        hrv: Optional[float] = None,
-        sleep_secs: Optional[int] = None,
-        readiness: Optional[int] = None,
-        fatigue: Optional[int] = None,
-        mood: Optional[int] = None,
-        comments: Optional[str] = None,
-        athlete_id: str = "0",
+        date: Annotated[str, Field(description="Target date in YYYY-MM-DD format.")],
+        weight: Annotated[Optional[float], Field(description="Body weight in kilograms.")] = None,
+        resting_hr: Annotated[
+            Optional[int], Field(description="Resting heart rate in beats per minute.")
+        ] = None,
+        hrv: Annotated[Optional[float], Field(description="Heart rate variability (rmssd).")] = None,
+        sleep_secs: Annotated[
+            Optional[int], Field(description="Total sleep duration in seconds.")
+        ] = None,
+        readiness: Annotated[
+            Optional[int], Field(description="Subjective readiness score (1-10 or 1-100).")
+        ] = None,
+        fatigue: Annotated[
+            Optional[int], Field(description="Subjective fatigue score (1-7 scale).")
+        ] = None,
+        mood: Annotated[
+            Optional[int], Field(description="Subjective mood score (1-7 scale).")
+        ] = None,
+        comments: Annotated[
+            Optional[str], Field(description="Daily notes or subjective comments.")
+        ] = None,
+        athlete_id: Annotated[
+            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
+        ] = "0",
     ) -> Dict[str, Any]:
-        """Update wellness metrics for a given date.
+        """Update daily wellness metrics for a given date.
+
+        Use to log or update daily sleep, weight, HRV, and subjective readiness. Updates only specified fields.
 
         Args:
             date: Date in YYYY-MM-DD format.
@@ -85,3 +114,4 @@ def register(mcp: FastMCP) -> None:
 
         client = IntervalsClient()
         return client.update_wellness(date=date, wellness_data=wellness_data, athlete_id=athlete_id)
+
