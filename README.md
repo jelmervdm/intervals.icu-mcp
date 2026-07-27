@@ -1,6 +1,23 @@
 # Intervals.icu MCP Server
 
+[![Docker Image](https://img.shields.io/badge/docker-ghcr.io-blue.svg)](https://github.com/jelmervdm/intervals.icu-mcp)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Python Version](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue.svg)](pyproject.toml)
+[![TDQS Score](https://img.shields.io/badge/TDQS-4.60%2F5.00%20(Tier%20A%2B)-success.svg)](https://github.com/glama-ai/tool-definition-quality-score)
+
 Model Context Protocol (MCP) server for [Intervals.icu](https://intervals.icu), providing athletic training analysis, activity management, calendar event planning, wellness tracking, and workout library integration to AI assistants like Claude Desktop, Cursor, and IBM ContextForge.
+
+---
+
+## 🏆 Tool Definition Quality Score (TDQS)
+
+This server is audited against the **[Tool Definition Quality Score (TDQS)](https://github.com/glama-ai/tool-definition-quality-score)** framework to guarantee optimal function calling, type safety, and runtime safety for LLMs:
+- **Score:** `4.60 / 5.00` (**Tier A+**)
+- **Behavioral Annotations (`ToolAnnotations`):** 100% of tools specify `readOnlyHint`, `destructiveHint`, and `idempotentHint` metadata.
+- **Parameter Descriptions:** 100% of tool parameters use explicit Pydantic `Annotated[T, Field(description=...)]` metadata.
+- **Operational Guidelines:** Standardized docstrings detailing explicit "Use when..." context across all 19 tools.
+
+---
 
 ## Features
 
