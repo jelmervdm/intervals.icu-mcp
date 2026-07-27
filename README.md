@@ -163,6 +163,26 @@ Podman is fully supported on Fedora/RHEL as a rootless drop-in replacement for D
 - `list_workout_folders(athlete_id="0")`: List folders in the workout library.
 - `list_workouts(folder_id, athlete_id="0")`: List structured library workouts.
 
+---
+
+## AI Coaching Skills
+
+For AI agents acting as endurance coaches, this MCP server pairs directly with the [Athletic Performance Coaching Skills](https://github.com/jelmervdm/skills) repository.
+
+While `intervals.icu-mcp` provides data access (activity streams, daily wellness, calendar planning, and workout library management), `jelmervdm/skills` provides physiological rules, workout analysis workflows, and evidence-based training prescription guardrails for AI assistants.
+
+### Available Skills in [jelmervdm/skills](https://github.com/jelmervdm/skills)
+
+- **[Cycling](https://github.com/jelmervdm/skills/tree/main/coach/cycling)**: Coggan power/HR zones, aerobic decoupling ($P\text{:}HR$), interval compliance scoring, periodization, and race pacing.
+- **[Running](https://github.com/jelmervdm/skills/tree/main/coach/running)**: Jack Daniels VDOT pacing formulas, cadence dynamics, Grade-Adjusted Pace (GAP), rTSS, and race strategies.
+- **[Swimming](https://github.com/jelmervdm/skills/tree/main/coach/swimming)**: Critical Swim Speed (CSS), SWOLF stroke efficiency, send-off clocks, and open-water drafting.
+- **[Triathlon](https://github.com/jelmervdm/skills/tree/main/coach/triathlon)**: Multi-sport stress balancing ($\text{TSS} + \text{rTSS} + \text{sTSS}$), brick workout design, and T1/T2 transition execution.
+- **[Ironman](https://github.com/jelmervdm/skills/tree/main/coach/ironman)**: Long-course 70.3/140.6 pacing budgets, high-carb gut training ($80\text{--}120\text{g/hr}$), special needs strategy, and 21-day tapers.
+- **[Cross-Country Skiing](https://github.com/jelmervdm/skills/tree/main/coach/xc-skiing)**: Skate & Classic subtechnique kinematics (V1/V2, Diagonal, Double Poling), dryland roller skiing, and marathon ski pacing.
+- **[Weight Training](https://github.com/jelmervdm/skills/tree/main/coach/weight-training)**: RIR/RPE autoregulation, strength/hypertrophy mesocycles, and concurrent endurance training integration.
+
+---
+
 ## Development
 
 ```bash
