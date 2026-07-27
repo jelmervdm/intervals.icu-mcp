@@ -46,7 +46,7 @@ pip install -e ".[dev,router]"
 Pull pre-built image or build locally:
 
 ```bash
-podman pull ghcr.io/jelmervdm/intervals.icu-mcp:main
+podman pull ghcr.io/jelmervdm/intervals.icu-mcp:latest
 ```
 
 ---
@@ -88,7 +88,7 @@ Podman is fully supported on Fedora/RHEL as a rootless drop-in replacement for D
         "run", "-i", "--rm",
         "-e", "INTERVALS_API_KEY",
         "-e", "INTERVALS_ATHLETE_ID",
-        "ghcr.io/jelmervdm/intervals.icu-mcp:main"
+        "ghcr.io/jelmervdm/intervals.icu-mcp:latest"
       ],
       "env": {
         "INTERVALS_API_KEY": "your_api_key_here",
