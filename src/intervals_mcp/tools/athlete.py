@@ -12,9 +12,7 @@ def register(mcp: FastMCP) -> None:
 
     @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
     def get_athlete_profile(
-        athlete_id: Annotated[
-            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
-        ] = "0"
+        athlete_id: Annotated[str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")] = "0",
     ) -> Dict[str, Any]:
         """Fetch athlete profile details, including FTP, LTHR, weight, max HR, and training zones.
 
@@ -25,4 +23,3 @@ def register(mcp: FastMCP) -> None:
         """
         client = IntervalsClient()
         return client.get_athlete(athlete_id=athlete_id)
-

@@ -14,13 +14,12 @@ def register(mcp: FastMCP) -> None:
     def list_events(
         oldest: Annotated[str, Field(description="Start date in YYYY-MM-DD format (e.g. '2026-07-01').")],
         newest: Annotated[str, Field(description="End date in YYYY-MM-DD format (e.g. '2026-07-26').")],
-        athlete_id: Annotated[
-            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
-        ] = "0",
+        athlete_id: Annotated[str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")] = "0",
     ) -> List[Dict[str, Any]]:
         """List calendar events and planned workouts between dates.
 
-        Use when browsing planned workouts, notes, or race events on the calendar. To fetch details of a specific planned event, use get_event.
+        Use when browsing planned workouts, notes, or race events on the calendar.
+        To fetch details of a specific planned event, use get_event.
 
         Args:
             oldest: Start date (YYYY-MM-DD).
@@ -33,13 +32,12 @@ def register(mcp: FastMCP) -> None:
     @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
     def get_event(
         event_id: Annotated[int, Field(description="Calendar event ID.")],
-        athlete_id: Annotated[
-            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
-        ] = "0",
+        athlete_id: Annotated[str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")] = "0",
     ) -> Dict[str, Any]:
         """Fetch details of a single calendar event or planned workout.
 
-        Use when inspecting target workout steps or race plans for a specific calendar item. To list events across a date range, use list_events.
+        Use when inspecting target workout steps or race plans for a specific calendar item.
+        To list events across a date range, use list_events.
 
         Args:
             event_id: Calendar event ID.
@@ -58,15 +56,9 @@ def register(mcp: FastMCP) -> None:
         description: Annotated[
             Optional[str], Field(description="Workout prescription steps or description text.")
         ] = None,
-        type: Annotated[
-            Optional[str], Field(description="Activity type (e.g. 'Ride', 'Run', 'Swim').")
-        ] = None,
-        category: Annotated[
-            str, Field(description="Event category: 'WORKOUT', 'RACE', or 'NOTE'.")
-        ] = "WORKOUT",
-        athlete_id: Annotated[
-            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
-        ] = "0",
+        type: Annotated[Optional[str], Field(description="Activity type (e.g. 'Ride', 'Run', 'Swim').")] = None,
+        category: Annotated[str, Field(description="Event category: 'WORKOUT', 'RACE', or 'NOTE'.")] = "WORKOUT",
+        athlete_id: Annotated[str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")] = "0",
     ) -> Dict[str, Any]:
         """Create a new planned workout, race event, or note on the calendar.
 
@@ -100,12 +92,8 @@ def register(mcp: FastMCP) -> None:
             Optional[str], Field(description="Updated local start time (YYYY-MM-DDTHH:MM:SS).")
         ] = None,
         name: Annotated[Optional[str], Field(description="Updated event title.")] = None,
-        description: Annotated[
-            Optional[str], Field(description="Updated workout prescription steps or notes.")
-        ] = None,
-        athlete_id: Annotated[
-            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
-        ] = "0",
+        description: Annotated[Optional[str], Field(description="Updated workout prescription steps or notes.")] = None,
+        athlete_id: Annotated[str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")] = "0",
     ) -> Dict[str, Any]:
         """Update an existing calendar event or planned workout.
 
@@ -135,9 +123,7 @@ def register(mcp: FastMCP) -> None:
     @mcp.tool(annotations=ToolAnnotations(destructiveHint=True, idempotentHint=True))
     def delete_event(
         event_id: Annotated[int, Field(description="ID of the event to delete.")],
-        athlete_id: Annotated[
-            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
-        ] = "0",
+        athlete_id: Annotated[str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")] = "0",
     ) -> Dict[str, Any]:
         """Delete a calendar event or planned workout by ID.
 
@@ -149,4 +135,3 @@ def register(mcp: FastMCP) -> None:
         """
         client = IntervalsClient()
         return client.delete_event(event_id=event_id, athlete_id=athlete_id)
-

@@ -12,9 +12,7 @@ def register(mcp: FastMCP) -> None:
 
     @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
     def list_workout_folders(
-        athlete_id: Annotated[
-            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
-        ] = "0"
+        athlete_id: Annotated[str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")] = "0",
     ) -> List[Dict[str, Any]]:
         """List workout folders in the athlete library.
 
@@ -28,12 +26,8 @@ def register(mcp: FastMCP) -> None:
 
     @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
     def list_workouts(
-        folder_id: Annotated[
-            Optional[int], Field(description="Optional workout folder ID to filter by.")
-        ] = None,
-        athlete_id: Annotated[
-            str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")
-        ] = "0",
+        folder_id: Annotated[Optional[int], Field(description="Optional workout folder ID to filter by.")] = None,
+        athlete_id: Annotated[str, Field(description="Athlete ID (defaults to '0' for authenticated athlete).")] = "0",
     ) -> List[Dict[str, Any]]:
         """List structured library workouts.
 
@@ -45,4 +39,3 @@ def register(mcp: FastMCP) -> None:
         """
         client = IntervalsClient()
         return client.list_workouts(folder_id=folder_id, athlete_id=athlete_id)
-
