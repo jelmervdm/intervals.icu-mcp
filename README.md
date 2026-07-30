@@ -96,7 +96,7 @@ Podman is fully supported on Fedora/RHEL as a rootless drop-in replacement for D
     "intervals": {
       "command": "podman",
       "args": [
-        "run", "-i", "--rm",
+        "run", "-i", "--rm", "--pull=newer",
         "-e", "INTERVALS_API_KEY",
         "-e", "INTERVALS_ATHLETE_ID",
         "ghcr.io/jelmervdm/intervals.icu-mcp:latest"
